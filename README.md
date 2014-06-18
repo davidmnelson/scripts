@@ -4,7 +4,7 @@ AirPrintProfileCreator is a simple bash script which aids you in creating mobile
 
 # Usage
 
-Download and run the script ("sh AirPrintProfileCreator.sh") and follow the prompts on screen. When the profile has been created, you can install it on your iOS device via Configurator, MDM, or just post it online or email it to yourself.
+Download and run the script on your server ("sudo sh AirPrintProfileCreator.sh") and follow the prompts on screen. When the profile has been created, you can install it on your iOS device via Configurator, MDM, or just post it online or email it to yourself.
 
 # Requirements
 
