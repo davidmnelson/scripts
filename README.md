@@ -13,3 +13,7 @@ The script should work on any recent Mac or other *nix systems with CUPS install
 # Warranty
 
 There isn't one.
+
+# License
+
+GPL. Use it for whatever you want but if you distribute changes outside your home/organization please make them available to everyone.
