@@ -9,3 +9,7 @@ Download and run the script ("sh AirPrintProfileCreator.sh") and follow the prom
 # Requirements
 
 The script should work on any recent Mac or other *nix systems with CUPS installed. I have only tested on OS X v 10.9. Your CUPS server must have a static/reserved IP.
+
+# Warranty
+
+There isn't one.
