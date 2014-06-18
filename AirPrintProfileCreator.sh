@@ -1,4 +1,6 @@
 #!/bin/bash
+# Script by David Nelson. Other credits via inline comments as needed.
+# More info and latest version at https://github.com/davidmnelson/airprintprofilecreator
 
 if [[ $EUID -ne 0 ]]; then
    echo "Please run as root or sudo." 1>&2
