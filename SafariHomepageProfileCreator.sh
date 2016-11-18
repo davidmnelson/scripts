@@ -1,9 +1,10 @@
 #!/bin/bash
 # Script by David Nelson. Other credits via inline comments as needed.
-# More info and latest version at https://github.com/davidmnelson/safarihomepageprofilecreator
+# More info and latest version at https://github.com/davidmnelson/mobileconfigscripts
+# Pass a URL when running. For example 'sh SafariHomepageProfileCreator.sh http://www.google.com'
 
 
-# Did an argument sent?
+# Did an argument get sent?
 if [[ $1 == "" && $1 != NULL ]] ; then
 echo "Please supply the URL of a web page when running this script."
 exit 0;
