@@ -1,6 +1,7 @@
 #!/bin/bash
 # Script by David Nelson. Other credits via inline comments as needed.
-# More info and latest version at https://github.com/davidmnelson/desktoppictureprofilecreator
+# Pass the path of an image when running. For example 'sh DesktopPictureProfileCreator.sh /Library/Desktop\ Pictures/Aqua\ Blue.jpg'
+# More info and latest version at https://github.com/davidmnelson/mobileconfigscripts
 
 
 # Did an argument sent?
