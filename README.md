@@ -4,7 +4,7 @@ These are simple scripts that aid in the creation of mobileconfig profiles for m
 
 # Usage
 
-Download and run the script on your server ("sudo sh name-of-script.sh") and follow the prompts on screen. Some scripts require values to be passed when invoked. For example SafariHomepageProfileCreator.sh needs the URL of a website.
+Download and run the scripts, following the prompts on screen. Some may require values to be passed when invoked. For example SafariHomepageProfileCreator.sh needs the URL of a website.
 
 # Requirements
 
