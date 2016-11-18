@@ -1,14 +1,14 @@
 # Overview
 
-AirPrintProfileCreator is a simple bash script which aids you in creating mobileconfig profiles that enable iOS devices to print to a CUPS server.
+These are simple scripts that aid in the creation of mobileconfig profiles.
 
 # Usage
 
-Download and run the script on your server ("sudo sh AirPrintProfileCreator.sh") and follow the prompts on screen. When the profile has been created, you can install it on your iOS device via Configurator, MDM, or just post it online or email it to yourself.
+Download and run the script on your server ("sudo sh name-of-script.sh") and follow the prompts on screen. Some scripts require values to be passed when invoked. For example SafariHomepageProfileCreator.sh needs the URL of a website.
 
 # Requirements
 
-The script should work on any recent Mac or other *nix systems with CUPS installed. I have only tested on OS X v 10.9. Your CUPS server must have a static/reserved IP.
+The script should work on any recent Mac or other *nix systems that have the uuidgen command.
 
 # Warranty
 
