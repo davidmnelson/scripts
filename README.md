@@ -1,6 +1,6 @@
 # Overview
 
-These are simple scripts that aid in the creation of mobileconfig profiles.
+These are simple scripts that aid in the creation of mobileconfig profiles for macOS and/or iOS.
 
 # Usage
 
