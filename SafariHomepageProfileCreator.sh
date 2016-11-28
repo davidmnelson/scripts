@@ -1,6 +1,5 @@
 #!/bin/bash
-# Script by David Nelson. Other credits via inline comments as needed.
-# More info and latest version at https://github.com/davidmnelson/mobileconfigscripts
+# David Nelson <https://github.com/davidmnelson/mobileconfigscripts>
 # Pass a URL when running. For example 'sh SafariHomepageProfileCreator.sh http://www.google.com'
 
 
