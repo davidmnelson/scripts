@@ -16,4 +16,4 @@ There isn't one.
 
 # License
 
-GPL. Use it for whatever you want but if you distribute changes outside your home/organization please make them available to everyone.
+GPL. Use however you want but if you distribute changes outside your home/organization please make them available to everyone.
