@@ -12,7 +12,7 @@ The script should work on any recent Mac or other *nix systems that have the uui
 
 # Warranty
 
-There isn't one.
+None.
 
 # License
 
