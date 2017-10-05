@@ -1,4 +1,5 @@
 #!/bin/bash
+# Kills and restarts a dead SMARTBoardService to fix solid red or flashing green light.
 
 for pid in `/usr/bin/pgrep SMARTBoardService`; do 
 	/bin/kill $pid ; 
