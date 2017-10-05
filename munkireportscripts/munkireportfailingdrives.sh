@@ -12,7 +12,8 @@ dbname="munkireport"
 # Show reports received in the last X number of days. 
 numberofdays="3"
 
-# Specify the path of some programs we need.
+# Specify the paths of some programs we need. Defaults are for CentOS 7.
+# You may have to change some of them to use on other distros or macOS.
 mysql="/bin/mysql"
 echo="/bin/echo"
 sendmail="/usr/sbin/sendmail"
