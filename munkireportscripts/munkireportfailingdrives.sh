@@ -9,7 +9,7 @@ reportaddress="your@address.here"
 # What's the database called? 
 dbname="munkireport"
 
-# Show reports received in the last X number of days. 
+# Include reports received in the last X number of days. 
 numberofdays="3"
 
 # Specify the paths of some programs we need. Defaults are for CentOS 7.
