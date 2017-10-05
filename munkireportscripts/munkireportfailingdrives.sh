@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The user who runs this should have a .my.cnf file that lets 
-# them select against the database without supplying a password.
+# them select from the database without supplying a password.
 
 # Where will we send the report? 
 reportaddress="your@address.here"
