@@ -73,7 +73,7 @@ echo '#!/bin/bash
 /usr/sbin/chown -R 500 "/usr/local/FirefoxCA"
 /bin/chmod a+rx /usr/local/outset/boot-every/FirefoxCA.sh
 /usr/local/outset/boot-every/FirefoxCA.sh' > "$certname/scripts/postinstall"
-chmod a+x "$certname/scripts/postinstall"
+/bin/chmod a+x "$certname/scripts/postinstall"
 
 # Build the package.
 munkipkg "$certname"
