@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+# Created by David Nelson. https://github.com/davidmnelson/
+#
+# No warranty.
+#
+# Feel free to use and modify as needed, but consider sharing your changes.
+#
+# munkipkg is required.
+#
+# outset is not required, but is recommended so the config gets
+# reinstalled automatically if Firefox is updated by user.
+#
+
+# Is munkipkg installed?
+if [[ ! -f "/usr/local/bin/munkipkg" ]] ; then
+echo "Please install munkipkg first -- https://github.com/munki/munki-pkg"
+
+# Was an argument sent?
+elif [[ $1 == "" && $1 != NULL ]] ; then
+echo "Please run this script passing the path to a Certificate Authority file as the only argument."
+exit;
+
+# Does the file exist?
+elif [[ ! -f $1 ]]; then
+echo "The file \"$1\" was not found. Please try again."
+exit;
+
+# If previous tests succeeded, continue.
+
+elif [[ -f $1 ]]; then
+
+# This will be the name of the package.
+certname=`echo "Firefox-CA-"${1##*/} | /usr/bin/sed 's/\./-/g'`
+
+# This is the content of the cert file minus the beginning/end line, minus line breaks.
+certcontent=`cat "$1" | grep -vi "begin\|end" |  tr -d '\n'`
+
+# Create the munkipkg project.
+munkipkg --create "$certname"
+
+# Create the directory the cfg/js files will live in.
+mkdir -p "$certname/payload/usr/local/FirefoxCA"
+
+# Create the local-settings.js file.
+echo 'pref("general.config.filename", "mozilla.cfg");
+pref("general.config.obscure_value", 0);' > "$certname/payload/usr/local/FirefoxCA/local-settings.js"
+
+# Create the mozilla.cfg file.
+echo '// Trusted Certificate Authority
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var certdb = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB);
+var certdb2 = certdb;
+try {
+   certdb2 = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB2);
+} catch (e) {}
+cert = "'$certcontent'"; // This should be the certificate content with no line breaks at all.
+certdb.addCertFromBase64(cert, "C,C,C", "");' > "$certname/payload/usr/local/FirefoxCA/mozilla.cfg"
+
+# Create the directory the script lives in.
+mkdir -p "$certname/payload/usr/local/outset/boot-every"
+
+# Create the outset script. 
+echo '#!/bin/bash
+/bin/cp "/usr/local/FirefoxCA/mozilla.cfg" "/Applications/Firefox.app/Contents/Resources/mozilla.cfg"
+/bin/cp "/usr/local/FirefoxCA/local-settings.js" "/Applications/Firefox.app/Contents/Resources/defaults/pref/local-settings.js"' > "$certname/payload/usr/local/outset/boot-every/FirefoxCA.sh"
+
+# Create the postinstall script.
+echo '#!/bin/bash
+/usr/sbin/chown -R root:wheel "/usr/local/FirefoxCA"
+/usr/sbin/chown -R 500 "/usr/local/FirefoxCA"
+/bin/chmod a+rx /usr/local/outset/boot-every/FirefoxCA.sh
+/usr/local/outset/boot-every/FirefoxCA.sh' > "$certname/scripts/postinstall"
+chmod a+x "$certname/scripts/postinstall"
+
+# Build the package.
+munkipkg "$certname"
+
+# Reveal the package in Finder.
+open "$certname/build"
+
+fi
