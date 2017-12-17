@@ -8,6 +8,7 @@
 #
 # munkipkg is required.
 #
+# Script will be installed in outset's boot-every directory.
 # outset is not required, but is recommended so the config gets
 # reinstalled automatically if Firefox is updated by user.
 #
