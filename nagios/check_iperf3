@@ -1,0 +1,109 @@
+#!/bin/env python
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Nagios script to test speed against an iperf3 server.
+# Checks both TCP and UDP.
+
+# David Nelson <david@davidnelson.net> 
+# 2019-03-20 - initial release
+
+import sys, getopt, iperf3
+
+fullCmdArguments = sys.argv
+argumentList = fullCmdArguments[1:]
+unixOptions = "H:U:T:u:p:d:"
+
+# Default values if arguments not passed
+udp_target=200
+udp_critical=50
+tcp_critical=200
+testduration=3
+portnumber=5201
+serveraddress="undefined"
+
+# Nagios exit codes
+STATE_OK=0
+STATE_WARNING=1
+STATE_CRITICAL=2
+STATE_UNKNOWN=3
+
+# Get arguments
+try:
+	arguments, values = getopt.getopt(argumentList, unixOptions)
+except getopt.err as err:
+	print (str(err))
+	sys.exit(2)
+for currentArugment, currentValue in arguments:
+	if currentArugment in ("-H"):
+		serveraddress=currentValue
+	elif currentArugment in ("-T"):
+		tcp_critical=round(float(currentValue),0)
+	elif currentArugment in ("-U"):
+		udp_critical=round(float(currentValue),0)
+	elif currentArugment in ("-u"):
+		udp_target=round(float(currentValue),0)
+	elif currentArugment in ("-p"):
+		portnumber=int(currentValue)
+	elif currentArugment in ("-d"):
+		testduration=int(currentValue)
+
+if len(sys.argv) == 1 or serveraddress=="undefined":
+        print "One or more arguments must be supplied."
+        print "Required: "
+	print "	-H	Hostname or IP of the iperf3 server."
+        print "Optional: "
+	print "	-T	TCP bandwidth warning threshold in Megabits. Default:",tcp_critical
+	print "	-U	UDP bandwidth warning threshold in Megabits. Default:",udp_critical
+	print "	-u	UDP bandwidth to test in Megabits. Default:",udp_target
+	print "	-p	Port the server is listening on. Default:",portnumber
+	print "	-d	Test duration in seconds. Default:",testduration
+	print "Example: "
+	print "	./check_iperf3 -H iperf.example.com -T 300 -U 100 -u 200 -p 6001 -d 5"
+        sys.exit(STATE_WARNING)
+
+# Get TCP results
+client_tcp=iperf3.Client()
+client_tcp.duration=testduration
+client_tcp.server_hostname=serveraddress
+client_tcp.port=portnumber
+result_tcp=client_tcp.run()
+
+# Get UDP results
+client_udp=iperf3.Client()
+client_udp.duration=testduration
+client_udp.server_hostname=serveraddress
+client_udp.port=portnumber
+client_udp.protocol='udp'
+client_udp.blksize=1448
+udp_target=udp_target*1000000
+client_udp.bandwidth=int(udp_target)
+result_udp=client_udp.run()
+
+# Assign vars and round them
+tcp_sent=round(float(result_tcp.sent_Mbps),2)
+tcp_received=round(float(result_tcp.received_Mbps),2)
+udp_bandwidth=round(float(result_udp.Mbps),2)
+jitter=result_udp.jitter_ms
+
+if tcp_sent >= tcp_critical and tcp_received >= tcp_critical and udp_bandwidth >= udp_critical:
+   print "iperf3 OK - TCP " + str(tcp_sent) + " Mbps up, TCP " + str(tcp_received) + " Mbps down, UDP " + str(udp_bandwidth) + " Mbps | tcpin=" + str(tcp_received) + "MB tcpout=" + str(tcp_sent) + "MB udp=" + str(udp_bandwidth) + "MB jitter=" + str(jitter) + "ms"
+   sys.exit(STATE_OK)
+elif tcp_sent < tcp_critical or tcp_received < tcp_critical or udp_bandwidth < udp_critical:
+   print "iperf3 NOT OK - TCP " + str(tcp_sent) + " Mbps up, TCP " + str(tcp_received) + " Mbps down, UDP " + str(udp_bandwidth) + " Mbps | tcpin=" + str(tcp_received) + "MB tcpout=" + str(tcp_sent) + "MB udp=" + str(udp_bandwidth) + "MB jitter=" + str(jitter) + "ms"
+   sys.exit(STATE_CRITICAL)
+else:
+   print "iperf3 test could not be completed."
+   sys.exit(STATE_WARNING)
+fi
