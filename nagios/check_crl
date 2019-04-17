@@ -14,7 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Nagios script checks expiration of your CA's CRL (Certificate Revocation List). 
+# David Nelson <david@davidnelson.net> - 2019-04-17
+# Changelog: - print issuer in output in case you check multiple CRLs
 
 # David Nelson <david@davidnelson.net> - 2019-03-20
 # Changelog: - put exit codes in variables for readability
@@ -75,13 +76,14 @@ def check_crl(url, warn, crit):
                 break
         crlfile.close()
 
-        ret = subprocess.check_output(["/usr/bin/openssl", "crl", "-inform", inform, "-noout", "-nextupdate", "-in", tmpcrl], stderr=subprocess.STDOUT)
+        ret = subprocess.check_output(["/usr/bin/openssl", "crl", "-inform", inform, "-noout", "-nextupdate", "-in", tmpcrl, "-issuer"], stderr=subprocess.STDOUT)
     except:
         print ("UNKNOWN: CRL could not be parsed: %s %s" % url)
         os.remove(tmpcrl)
 	sys.exit(STATE_UNKNOWN)
 
-    nextupdate = ret.strip().decode('utf-8').split("=")
+    nextupdate = ret.strip().decode('utf-8').split('\n', 1)[0].split("=")
+    issuer = ret.strip().decode('utf-8').split('\n', 1)[1].split("CN=")
     os.remove(tmpcrl)
     eol = time.mktime(time.strptime(nextupdate[1],"%b %d %H:%M:%S %Y GMT"))
     today = time.mktime(datetime.datetime.utcnow().timetuple())
@@ -97,16 +99,16 @@ def check_crl(url, warn, crit):
         unit = "days"
     gmtstr = time.asctime(time.localtime(eol))
     if minutes < 0:
-        print "CRL CRITICAL - Expired %d %s ago (%s GMT)" % (-expires, unit, gmtstr)
+        print "CRL CRITICAL -", issuer[1], "expired %d %s ago (%s GMT)" % (-expires, unit, gmtstr)
 	sys.exit(STATE_CRITICAL)
     elif minutes <= crit:
-        print "CRL CRITICAL - Expires in %d %s (%s GMT)" % (expires, unit, gmtstr)
+        print "CRL CRITICAL -", issuer[1], "expires in %d %s (%s GMT)" % (expires, unit, gmtstr)
 	sys.exit(STATE_CRITICAL)
     elif minutes <= warn:
-        print "CRL WARNING - Expires in %d %s (%s GMT)" % (expires, unit, gmtstr)
+        print "CRL WARNING -", issuer[1], "expires in %d %s (%s GMT)" % (expires, unit, gmtstr)
 	sys.exit(STATE_WARNING)
     else:
-        print "CRL OK - Expires in %d %s (%s GMT)" % (expires, unit, gmtstr)
+        print "CRL OK -", issuer[1], "expires in %d %s (%s GMT)" % (expires, unit, gmtstr)
 	sys.exit(STATE_OK)
 
     sys.exit(exitcode)
