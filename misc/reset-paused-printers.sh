@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/usr/bin/lpstat -p | /usr/bin/grep -EB1 "Paused" | /usr/bin/grep "^printer" | while read line; do
+/usr/bin/lpstat -p | /usr/bin/grep -iB1 "Paused\|failed" | /usr/bin/grep "^printer" | while read line; do
 
 queue=`/bin/echo $line | /usr/bin/awk -F ' ' '{print $2}'`
 
