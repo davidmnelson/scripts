@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Takes a list of missing machines from a URL (ideally auto-populated from your 
-# inventory solution) and sends an email if they've recently checked in to MunkiReport.
-# Be sure to set the values below (at minimum you must set the listurl and contacts.)
+# inventory database) and sends an email if they've recently checked in to MunkiReport.
+# Be sure to set the variables below. At minimum you must set the listurl and contacts.
+# Script assumes the user running it has MySQL select rights via credentials in .my.cnf
 
 # This URL should simply return a list of serial numbers, one per line.
 listurl="https://example.com/missing.txt"
@@ -14,15 +15,11 @@ minutes="15"
 # Name of MunkiReport database.
 database="munkireport"
 
-
-# Paths to programs we need. These are from CentOS 7. Change as needed.
+# Paths to programs we need. Defaults are from CentOS 7. Change as needed.
 curl="/usr/bin/curl"
 mysql="/bin/mysql"
 printf="/bin/printf"
 sendmail="/usr/sbin/sendmail"
-
-foundmaclist=""
-output=""
 
 query="select machine.computer_name as \"Computer Name\",reportdata.serial_number as \"Serial Number\",FROM_UNIXTIME(reportdata.timestamp) as \"Date and Time Seen\",reportdata.remote_ip as \"Reporting IP\", network.ethernet as \"Wi-Fi MAC\" from machine,reportdata,network where ("
 
