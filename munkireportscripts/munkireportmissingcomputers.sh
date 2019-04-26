@@ -3,7 +3,6 @@
 # Takes a list of missing machines from a URL (ideally auto-populated from your 
 # inventory solution) and sends an email if they've recently checked in to MunkiReport.
 # Be sure to set the values below (at minimum you must set the listurl and contacts.)
-# 
 
 # This URL should simply return a list of serial numbers, one per line.
 listurl="https://example.com/missing.txt"
