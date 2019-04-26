@@ -21,7 +21,7 @@ mysql="/bin/mysql"
 printf="/bin/printf"
 sendmail="/usr/sbin/sendmail"
 
-query="select machine.computer_name as \"Computer Name\",reportdata.serial_number as \"Serial Number\",FROM_UNIXTIME(reportdata.timestamp) as \"Date and Time Seen\",reportdata.remote_ip as \"Reporting IP\", network.ethernet as \"Wi-Fi MAC\" from machine,reportdata,network where ("
+####################################################################
 
 missinglist=$($curl -s $listurl)
 
@@ -35,9 +35,27 @@ query+="reportdata.serial_number='$singlemac' "
 i=$((i+1))
 done
 
-query+=") AND FROM_UNIXTIME(reportdata.timestamp) >= now() - INTERVAL $minutes MINUTE AND machine.serial_number=reportdata.serial_number AND machine.serial_number=network.serial_number AND ( network.service=\"Wi-Fi\" OR network.service=\"AirPort\" );"
+query='select machine.computer_name as "Computer Name", '
+query+='reportdata.serial_number as "Serial Number", '
+query+='FROM_UNIXTIME(reportdata.timestamp) as "Date and Time Seen", '
+query+='reportdata.remote_ip as "Reporting IP", '
+query+='network.ethernet as "Wi-Fi MAC" from machine, '
+query+='reportdata, network where ( '
 
+i=0
+for singlemac in $missinglist
+do
+if [ $i -gt 0 ]; then
+query+=" OR "
+fi
+query+="reportdata.serial_number='$singlemac' "
+i=$((i+1))
+done
 
+query+=' ) AND FROM_UNIXTIME(reportdata.timestamp) >= now() - INTERVAL '$minutes' MINUTE '
+query+='AND machine.serial_number=reportdata.serial_number '
+query+='AND machine.serial_number=network.serial_number '
+query+='AND ( network.service="Wi-Fi" OR network.service="AirPort" );'
 theresult=$($mysql --html $database -e "$query");
 
 if [[ $theresult != "" ]]; then
@@ -47,7 +65,8 @@ To: $contacts
 Content-Type: text/html
 MIME-Version: 1.0
 
-<p>These missing Macs checked in to MunkiReport in the last $minutes minutes. If they are no longer missing, please correct their status in inventory.</p>
+<p>These missing Macs checked in to MunkiReport in the last $minutes minutes. 
+If they are no longer missing, please correct their status in inventory.</p>
 
 $theresult
 "
